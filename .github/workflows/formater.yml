@@ -1,0 +1,40 @@
+name: Format Python Code
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - '**.py'
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Black
+        run: pip install black
+
+      - name: Run Black code formatter
+        run: black .  # 格式化所有 Python 文件
+
+      - name: Commit and push changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions
+          author_email: actions@github.com
+          message: "style: auto-format code with Black"
+          add: "*.py"
+          push: true
+          # 仅当有更改时才会提交
